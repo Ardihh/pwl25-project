@@ -13,20 +13,32 @@ async function createProject(req, res, next) {
 
 async function listProjects(req, res, next) {
   try {
-    const user_id = req.user.role === 'admin' ? req.query.user_id : req.user.id;
-    const { status } = req.query;
-    const projects = await projectModel.listProjects({ user_id, status });
+    const isAdmin = req.user.role === "admin";
+    const projects = await projectModel.listProjects({
+      userId: isAdmin ? null : req.user.id,
+      isAdmin
+    });
+
     res.json({ projects });
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 }
 
 async function getProject(req, res, next) {
   try {
-    const id = req.params.id;
-    const project = await projectModel.getProjectById(id);
+    const project = await projectModel.getProjectById(req.params.id);
     if (!project) return res.status(404).json({ message: 'Project not found' });
+
+    // user biasa hanya boleh lihat project sendiri
+    if (req.user.role !== 'admin' && project.user_id !== req.user.id) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
     res.json({ project });
-  } catch (err) { next(err); }
+  } catch (err) {
+    next(err);
+  }
 }
 
 async function updateProject(req, res, next) {

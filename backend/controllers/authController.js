@@ -26,15 +26,46 @@ async function register(req, res, next) {
 async function login(req, res, next) {
   try {
     const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ message: 'email & password required' });
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "email & password required" });
+    }
+
     const user = await userModel.findUserByEmail(email);
-    if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
     const ok = await bcrypt.compare(password, user.password);
-    if (!ok) return res.status(401).json({ message: 'Invalid credentials' });
-    const payload = { id: user.id, email: user.email, role: user.role, name: user.name };
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-    res.json({ message: 'Login success', token });
-  } catch (err) { next(err); }
+    if (!ok) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const payload = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      name: user.name
+    };
+
+    const token = jwt.sign(payload, JWT_SECRET, {
+      expiresIn: JWT_EXPIRES_IN
+    });
+
+    res.json({
+      message: "Login success",
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+
+  } catch (err) {
+    next(err);
+  }
 }
 
 module.exports = { register, login };

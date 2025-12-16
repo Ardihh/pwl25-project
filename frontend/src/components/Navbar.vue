@@ -51,6 +51,7 @@ import { useAuthStore } from "../stores/auth";
 export default {
   setup() {
     const auth = useAuthStore();
+    const role = localStorage.getItem("role");
 
     function go(path) {
       window.location.href = path;

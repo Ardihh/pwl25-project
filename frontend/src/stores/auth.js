@@ -1,4 +1,3 @@
-// src/stores/auth.js
 import { defineStore } from "pinia";
 import api from "../api/axios";
 
@@ -8,21 +7,23 @@ export const useAuthStore = defineStore("auth", {
     token: localStorage.getItem("token") || null,
   }),
 
-  getters: {
-    isLoggedIn: (state) => !!state.token,
-  },
-
   actions: {
     async login(email, password) {
       const res = await api.post("/auth/login", { email, password });
+
+      // ⬇⬇⬇ INI YANG SEBELUMNYA KAMU KELEWAT
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.user.role);
+      localStorage.setItem("userName", res.data.user.name);
+
       this.token = res.data.token;
-      localStorage.setItem("token", this.token);
+      this.user = res.data.user;
     },
 
     logout() {
-      this.token = null;
+      localStorage.clear();
       this.user = null;
-      localStorage.removeItem("token");
-    },
-  },
+      this.token = null;
+    }
+  }
 });

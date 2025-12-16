@@ -52,7 +52,12 @@ export default {
     const handleLogin = async () => {
       try {
         await auth.login(email.value, password.value);
-        window.location.href = "/";
+        const role = localStorage.getItem("role");
+        if (role === "admin") {
+          window.location.href = "/admin/dashboard";
+        } else {
+          window.location.href = "/";
+        }
       } catch (err) {
         error.value = "Login gagal, periksa email/password";
       }

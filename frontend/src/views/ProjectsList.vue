@@ -33,6 +33,14 @@
               <span class="text-sm text-gray-500 font-medium">{{ p.deadline }}</span>
             </div>
             <p class="text-sm text-gray-500">{{ p.description }}</p>
+            <div class="flex justify-between items-center mt-2">
+              <p v-if="isAdmin && p.owner_name" class="text-sm text-gray-600">
+                👤 Owner: {{ p.owner_name }}
+              </p>
+                <span class="text-sm px-3 py-1 rounded-full font-medium" :class="getStatusClass(p.status)">
+                {{ p.status }}
+                </span>
+            </div>
           </div>
           <span class="text-2xl text-blue-600 ml-4">›</span>
         </div>
@@ -42,7 +50,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import api from "../api/axios";
 import Navbar from "../components/Navbar.vue";
 
@@ -53,12 +61,43 @@ export default {
   setup() {
     const projects = ref([]);
 
-    onMounted(async () => {
-      const res = await api.get("/projects");
-      projects.value = res.data.projects;
+    // ambil role dari localStorage
+    const role = localStorage.getItem("role");
+
+    // computed biar reactive & rapi
+    const isAdmin = computed(() => role === "admin");
+
+    // status badge
+    const getStatusClass = (status) => {
+      const statusClasses = {
+        ongoing: "bg-blue-100 text-blue-800",
+        planning: "bg-yellow-100 text-yellow-800",
+        completed: "bg-green-100 text-green-800",
+        on_hold: "bg-red-100 text-red-800"
+      };
+      return statusClasses[status] || "bg-gray-100 text-gray-800";
+    };
+
+    const loadProjects = async () => {
+      try {
+        const res = await api.get("/projects");
+        console.log(res.data.projects);
+        projects.value = res.data.projects || [];
+      } catch (err) {
+        console.error("Gagal ambil project:", err);
+        projects.value = [];
+      }
+    };
+
+    onMounted(() => {
+      loadProjects();
     });
 
-    return { projects };
-  },
+    return {
+      projects,
+      isAdmin,
+      getStatusClass
+    };
+  }
 };
 </script>

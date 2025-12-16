@@ -11,12 +11,15 @@ async function createProject({ user_id, title, description, budget, deadline, st
 }
 
 async function getProjectById(id) {
-  const [rows] = await db.execute(
-    `SELECT p.*, u.name as owner_name, u.email as owner_email
-     FROM projects p
-     JOIN users u ON p.user_id = u.id
-     WHERE p.id = ?`, [id]
-  );
+  const [rows] = await db.execute(`
+    SELECT 
+      p.*,
+      u.name AS owner_name
+    FROM projects p
+    JOIN users u ON p.user_id = u.id
+    WHERE p.id = ?
+  `, [id]);
+
   return rows[0];
 }
 
@@ -44,15 +47,30 @@ async function deleteProject(id) {
   return result.affectedRows > 0;
 }
 
-async function listProjects({ user_id, status } = {}) {
-  let sql = `SELECT p.*, u.name as owner_name FROM projects p JOIN users u ON p.user_id = u.id`;
-  const cond = [];
-  const vals = [];
-  if (user_id) { cond.push('p.user_id = ?'); vals.push(user_id); }
-  if (status) { cond.push('p.status = ?'); vals.push(status); }
-  if (cond.length) sql += ' WHERE ' + cond.join(' AND ');
-  sql += ' ORDER BY p.created_at DESC';
-  const [rows] = await db.execute(sql, vals);
+async function listProjects({ userId, isAdmin }) {
+  let sql = `
+    SELECT 
+      p.id,
+      p.title,
+      p.description,
+      p.status,
+      p.deadline,
+      p.user_id,
+      u.name AS owner_name
+    FROM projects p
+    JOIN users u ON p.user_id = u.id
+  `;
+
+  const params = [];
+
+  if (!isAdmin) {
+    sql += " WHERE p.user_id = ?";
+    params.push(userId);
+  }
+
+  sql += " ORDER BY p.created_at DESC";
+
+  const [rows] = await db.execute(sql, params);
   return rows;
 }
 
