@@ -47,19 +47,20 @@
 
 <script>
 import { useAuthStore } from "../stores/auth";
+import { useRouter } from "vue-router";
 
 export default {
   setup() {
     const auth = useAuthStore();
-    const role = localStorage.getItem("role");
+    const router = useRouter(); 
 
     function go(path) {
-      window.location.href = path;
+      router.push(path); 
     }
 
     function logout() {
       auth.logout();
-      go("/login");
+      router.push("/login");
     }
 
     return { auth, go, logout };

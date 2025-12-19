@@ -4,6 +4,9 @@ const cors = require('cors');
 
 const app = express();
 
+const auth = require('./middlewares/auth');
+const isAdmin = require('./middlewares/isAdmin');
+
 // middleware
 app.use(express.json());
 app.use(cors({
@@ -12,12 +15,16 @@ app.use(cors({
   allowedHeaders: "Content-Type,Authorization"
 }));
 
-// routes
+// public routes
 app.use('/api/auth', require('./routes/auth'));
+
+// routes
 app.use('/api/projects', require('./routes/projects'));
 app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/users', require('./routes/users'));
-app.use('/api/admin', require('./routes/admin'));
+
+// protect admin routes
+app.use("/api/admin", auth, isAdmin, require("./routes/admin"));
 
 // health
 app.get('/api/ping', (req, res) => {

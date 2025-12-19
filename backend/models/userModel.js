@@ -1,6 +1,26 @@
 // models/userModel.js
 const db = require('../config/db');
 
+async function listUsersWithProjectCount() {
+  const [rows] = await db.execute(`
+    SELECT 
+      u.id, u.name, u.email, u.role,
+      COUNT(p.id) AS total_projects
+    FROM users u
+    LEFT JOIN projects p ON p.user_id = u.id
+    GROUP BY u.id
+  `);
+  return rows;
+}
+
+async function updateRole(id, role) {
+  await db.execute("UPDATE users SET role=? WHERE id=?", [role, id]);
+}
+
+async function deleteUser(id) {
+  await db.execute("DELETE FROM users WHERE id=?", [id]);
+}
+
 async function createUser({ name, email, password, role = 'user' }) {
   const [result] = await db.execute(
     'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
@@ -24,4 +44,4 @@ async function listUsers() {
   return rows;
 }
 
-module.exports = { createUser, findUserByEmail, findUserById, listUsers };
+module.exports = { listUsersWithProjectCount, updateRole, deleteUser, createUser, findUserByEmail, findUserById, listUsers };

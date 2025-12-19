@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "../stores/auth";
 
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
@@ -10,15 +11,15 @@ import TaskForm from "../views/TaskForm.vue";
 
 const routes = [
   // PUBLIC 
-  { path: "/login", component: Login },
-  { path: "/register", component: Register },
+  { path: "/login", name: "Login", component: Login },
+  { path: "/register", name: "Register", component: Register },
 
   // ROOT (SMART REDIRECT) 
   {
     path: "/",
     redirect: () => {
       const role = localStorage.getItem("role");
-      return role === "admin" ? "/admin/AdminDashboard" : "/dashboard";
+      return role === "admin" ? "/admin/dashboard" : "/dashboard";
     }
   },
 
@@ -67,6 +68,10 @@ const routes = [
         component: () => import("../views/admin/AdminProjectDetail.vue")
       },
       {
+        path: "projects/:id/tasks/edit",
+        component: () => import("../views/admin/AdminProjectEdit.vue")
+      },
+      {
         path: "users",
         component: () => import("../views/admin/AdminUsers.vue")
       }
@@ -79,28 +84,27 @@ const router = createRouter({
   routes,
 });
 
-// ROUTER GUARD
+// ROUTER GUARD (Letakkan SETELAH inisialisasi const router)
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
-  // butuh login
+  const authStore = useAuthStore();
+  const token = authStore.token; // Gunakan nama variabel yang benar (authStore)
+  const role = authStore.role;
+
+  // 1. Butuh login tapi tidak ada token
   if (to.meta.requiresAuth && !token) {
     return next("/login");
   }
-  // butuh admin
+
+  // 2. Akses halaman admin tapi bukan admin
   if (to.meta.role === "admin" && role !== "admin") {
-    return next("/");
+    return next("/dashboard");
   }
-  // admin ke "/" → redirect ke admin dashboard
-  if (to.path === "/" && role === "admin") {
-    return next("/admin/dashboard");
-  }
-  // sudah login buka login/register
+
+  // 3. Sudah login tapi mencoba buka login/register
   if ((to.path === "/login" || to.path === "/register") && token) {
-    return role === "admin"
-      ? next("/admin/dashboard")
-      : next("/");
+    return role === "admin" ? next("/admin/dashboard") : next("/dashboard");
   }
+
   next();
 });
 

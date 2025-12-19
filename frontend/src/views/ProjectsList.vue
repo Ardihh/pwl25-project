@@ -34,9 +34,6 @@
             </div>
             <p class="text-sm text-gray-500">{{ p.description }}</p>
             <div class="flex justify-between items-center mt-2">
-              <p v-if="isAdmin && p.owner_name" class="text-sm text-gray-600">
-                👤 Owner: {{ p.owner_name }}
-              </p>
                 <span class="text-sm px-3 py-1 rounded-full font-medium" :class="getStatusClass(p.status)">
                 {{ p.status }}
                 </span>

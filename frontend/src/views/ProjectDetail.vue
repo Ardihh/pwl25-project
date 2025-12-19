@@ -2,18 +2,18 @@
   <div>
     <Navbar />
 
-    <div class="container mx-auto px-8 py-8 max-w-4xl">
+    <div class="container mx-auto px-8 py-8 max-w-4xl text-gray-800">
       <div class="mb-6 flex justify-between items-center">
-        <h2 class="text-3xl font-bold">Project: {{ project.title }}</h2>
+        <h2 class="text-3xl font-bold text-gray-900">Project: {{ project.title }}</h2>
         <div class="flex gap-2">
           <button 
-            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-md"
             @click="toggleEditMode"
           >
             {{ isEditing ? 'Cancel' : 'Edit Project' }}
           </button>
           <button 
-            class="px-4 py-2 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+            class="px-4 py-2 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-md"
             @click="deleteProject"
           >
             Delete Project
@@ -21,82 +21,49 @@
         </div>
       </div>
 
-      <!-- Edit Project Form -->
       <div v-if="isEditing" class="bg-white p-6 rounded-xl shadow-lg mb-6 border border-gray-100">
-        <h3 class="text-xl font-bold mb-4">Edit Project</h3>
+        <h3 class="text-xl font-bold mb-4">Edit Project Details</h3>
         <form @submit.prevent="updateProject" class="space-y-4">
           <div>
             <label class="block text-sm font-semibold mb-2 text-gray-700">Title:</label>
-            <input 
-              v-model="editForm.title" 
-              type="text"
-              required
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm bg-gray-50 text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-            />
+            <input v-model="editForm.title" type="text" required class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
           </div>
           <div>
             <label class="block text-sm font-semibold mb-2 text-gray-700">Description:</label>
-            <textarea 
-              v-model="editForm.description" 
-              rows="3"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm bg-gray-50 text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-            ></textarea>
+            <textarea v-model="editForm.description" rows="3" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all"></textarea>
           </div>
-          <div>
-            <label class="block text-sm font-semibold mb-2 text-gray-700">Budget:</label>
-            <input 
-              v-model="editForm.budget" 
-              type="number"
-              required
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm bg-gray-50 text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-semibold mb-2 text-gray-700">Deadline:</label>
-            <input 
-              v-model="editForm.deadline" 
-              type="date"
-              required
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm bg-gray-50 text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-            />
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-semibold mb-2 text-gray-700">Budget:</label>
+              <input v-model="editForm.budget" type="number" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-2 text-gray-700">Deadline:</label>
+              <input v-model="editForm.deadline" type="date" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all" />
+            </div>
           </div>
           <div>
             <label class="block text-sm font-semibold mb-2 text-gray-700">Status:</label>
-            <select 
-              v-model="editForm.status"
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm bg-gray-50 text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-            >
+            <select v-model="editForm.status" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
               <option value="planning">Planning</option>
               <option value="ongoing">Ongoing</option>
               <option value="completed">Completed</option>
               <option value="on_hold">On Hold</option>
             </select>
           </div>
-          <div class="flex gap-2">
-            <button 
-              type="submit"
-              class="px-5 py-2.5 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
-            >
-              Save Changes
-            </button>
-            <button 
-              type="button"
-              class="px-5 py-2.5 bg-gray-600 hover:bg-gray-700 active:bg-gray-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
-              @click="toggleEditMode"
-            >
-              Cancel
-            </button>
+          <div class="flex gap-2 pt-2">
+            <button type="submit" class="px-5 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors">Save Changes</button>
+            <button type="button" @click="toggleEditMode" class="px-5 py-2 bg-gray-500 text-white font-bold rounded-lg hover:bg-gray-600 transition-colors">Cancel</button>
           </div>
         </form>
       </div>
 
-      <!-- Project Details (View Mode) -->
       <div v-else class="bg-white p-6 rounded-xl shadow-lg mb-6 border border-gray-100">
-        <p class="mb-3"><span class="font-bold">Description:</span> {{ project.description }}</p>
-        <p class="mb-3"><span class="font-bold">Budget:</span> {{ project.budget }}</p>
-        <p class="mb-3"><span class="font-bold">Deadline:</span> {{ project.deadline }}</p>
-        <p class="mb-3"><span class="font-bold">Status:</span> 
-          <span class="px-2 py-1 rounded text-sm font-semibold" 
+        <p class="mb-3"><span class="font-bold text-gray-700">Description:</span> {{ project.description || 'No description provided' }}</p>
+        <p class="mb-3"><span class="font-bold text-gray-700">Budget:</span> Rp {{ Number(project.budget || 0).toLocaleString() }}</p>
+        <p class="mb-3"><span class="font-bold text-gray-700">Deadline:</span> {{ project.deadline || 'No deadline set' }}</p>
+        <p class="mb-3"><span class="font-bold text-gray-700">Status:</span> 
+          <span class="ml-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider" 
                 :class="{
                   'bg-green-100 text-green-800': project.status === 'completed',
                   'bg-blue-100 text-blue-800': project.status === 'ongoing',
@@ -108,133 +75,65 @@
         </p>
       </div>
 
-      <div class="mb-6">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold text-gray-900">Tasks List</h3>
         <button 
-          class="px-4 py-2 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
+          class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-all"
           @click="$router.push(`/projects/${id}/tasks/new`)"
         >
           + Add Task
         </button>
       </div>
-
-      <h3 class="text-2xl font-bold mb-4">Tasks</h3>
       
-      <div v-if="tasks.length === 0" class="bg-gray-50 p-5 rounded-lg text-center text-gray-600 border border-dashed border-gray-300">
-        No tasks yet
+      <div v-if="tasks.length === 0" class="bg-gray-50 p-10 rounded-xl text-center text-gray-500 border-2 border-dashed border-gray-200">
+        No tasks yet for this project.
       </div>
 
-      <div v-else class="space-y-3">
-        <!-- Edit Task Form -->
-        <div 
-          v-if="editingTaskId"
-          class="bg-blue-50 p-5 rounded-xl shadow-sm border-2 border-blue-300"
-        >
-          <h4 class="text-xl font-bold mb-4">Edit Task</h4>
-          <form @submit.prevent="updateTask" class="space-y-4">
-            <div>
-              <label class="block text-sm font-semibold mb-2 text-gray-700">Title:</label>
-              <input 
-                v-model="taskEditForm.title" 
-                type="text"
-                required
-                class="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-semibold mb-2 text-gray-700">Detail:</label>
-              <textarea 
-                v-model="taskEditForm.detail" 
-                rows="3"
-                class="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-              ></textarea>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-semibold mb-2 text-gray-700">Priority (1–5):</label>
-                <input 
-                  type="number" 
-                  v-model="taskEditForm.priority" 
-                  min="1" 
-                  max="5" 
-                  required
-                  class="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                />
+      <div v-else class="space-y-4">
+        <div v-for="task in tasks" :key="task.id" class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all">
+          
+          <div v-if="editingTaskId === task.id">
+            <h4 class="text-lg font-bold mb-3 text-blue-600">Edit Task</h4>
+            <form @submit.prevent="updateTask" class="space-y-3">
+              <input v-model="taskEditForm.title" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Task Title" />
+              <textarea v-model="taskEditForm.detail" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Task Detail"></textarea>
+              <div class="grid grid-cols-2 gap-3">
+                <select v-model="taskEditForm.status" class="w-full px-3 py-2 border rounded-lg">
+                  <option value="todo">Todo</option>
+                  <option value="in_progress">In Progress</option>
+                  <option value="done">Done</option>
+                </select>
+                <input v-model="taskEditForm.due_date" type="date" class="w-full px-3 py-2 border rounded-lg" />
               </div>
-              <div>
-                <label class="block text-sm font-semibold mb-2 text-gray-700">Due Date:</label>
-                <input 
-                  type="date" 
-                  v-model="taskEditForm.due_date" 
-                  required
-                  class="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                />
+              <div class="flex gap-2">
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-green-700">Save</button>
+                <button type="button" @click="editingTaskId = null" class="bg-gray-400 text-white px-4 py-2 rounded-lg font-bold hover:bg-gray-500">Cancel</button>
               </div>
-            </div>
-            <div>
-              <label class="block text-sm font-semibold mb-2 text-gray-700">Status:</label>
-              <select 
-                v-model="taskEditForm.status"
-                class="w-full px-4 py-3 rounded-lg border border-gray-300 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-              >
-                <option value="todo">Todo</option>
-                <option value="in_progress">In Progress</option>
-                <option value="done">Done</option>
-              </select>
-            </div>
-            <div class="flex gap-2">
-              <button 
-                type="submit"
-                class="px-5 py-2.5 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
-              >
-                Save Changes
-              </button>
-              <button 
-                type="button"
-                class="px-5 py-2.5 bg-gray-600 hover:bg-gray-700 active:bg-gray-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
-                @click="cancelEditTask"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
 
-        <!-- Task List -->
-        <div 
-          v-for="task in tasks" 
-          :key="task.id" 
-          class="bg-white p-5 rounded-xl shadow-sm border border-gray-100"
-        >
-          <h4 class="text-xl font-semibold mb-2">{{ task.title }}</h4>
-          <p class="text-gray-600 mb-2">{{ task.detail }}</p>
-          <div class="flex flex-wrap gap-4 text-sm">
-            <p><span class="font-semibold">Status:</span> 
-              <span class="px-2 py-1 rounded text-xs font-semibold"
-                    :class="{
-                      'bg-green-100 text-green-800': task.status === 'done',
-                      'bg-blue-100 text-blue-800': task.status === 'in_progress',
-                      'bg-yellow-100 text-yellow-800': task.status === 'todo'
-                    }">
-                {{ task.status }}
-              </span>
-            </p>
-            <p><span class="font-semibold">Priority:</span> {{ task.priority }}</p>
-            <p><span class="font-semibold">Due:</span> {{ task.due_date }}</p>
+          <div v-else>
+            <div class="flex justify-between items-start">
+              <div>
+                <h4 class="text-xl font-bold text-gray-800">{{ task.title }}</h4>
+                <p class="text-gray-600 text-sm mt-1 mb-3">{{ task.detail }}</p>
+              </div>
+              <div class="flex gap-3">
+                <button @click="startEditTask(task)" class="text-blue-600 hover:text-blue-800 text-sm font-bold uppercase tracking-tight">Edit</button>
+                <button @click="remove(task.id)" class="text-red-600 hover:text-red-800 text-sm font-bold uppercase tracking-tight">Delete</button>
+              </div>
+            </div>
+            
+            <div class="flex flex-wrap gap-4 text-xs font-bold text-gray-500 uppercase">
+              <div class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full" :class="task.status === 'done' ? 'bg-green-500' : 'bg-blue-400'"></span>
+                Status: {{ task.status }}
+              </div>
+              <span>Priority: {{ task.priority }}</span>
+              <span>Due: {{ task.due_date }}</span>
+            </div>
           </div>
-          <div class="mt-4 flex gap-2">
-            <button 
-              class="px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-sm"
-              @click="startEditTask(task)"
-            >
-              Edit
-            </button>
-            <button 
-              class="px-4 py-2 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg text-sm"
-              @click="remove(task.id)"
-            >
-              Delete
-            </button>
-          </div>
+
         </div>
       </div>
     </div>
@@ -243,8 +142,8 @@
 
 <script>
 import { ref, onMounted } from "vue";
-import api from "../api/axios";
-import { useRoute } from "vue-router";
+import api from "../api/axios"; // Sesuaikan path
+import { useRoute, useRouter } from "vue-router";
 import Navbar from "../components/Navbar.vue";
 
 export default {
@@ -253,12 +152,14 @@ export default {
   },
   setup() {
     const route = useRoute();
+    const router = useRouter();
     const id = route.params.id;
 
     const project = ref({});
     const tasks = ref([]);
     const isEditing = ref(false);
     const editingTaskId = ref(null);
+
     const editForm = ref({
       title: '',
       description: '',
@@ -266,6 +167,7 @@ export default {
       deadline: '',
       status: 'planning'
     });
+
     const taskEditForm = ref({
       title: '',
       detail: '',
@@ -275,33 +177,42 @@ export default {
     });
 
     const loadProject = async () => {
-      const res = await api.get(`/projects/${id}`);
-      project.value = res.data.project;
+      try {
+        const res = await api.get(`/projects/${id}`);
+        project.value = res.data.project;
+        
+        // Inisialisasi form edit
+        syncEditForm();
+      } catch (err) {
+        console.error("Gagal load project", err);
+      }
+    };
+
+    const loadTasks = async () => {
+      try {
+        const res = await api.get(`/tasks/project/${id}`);
+        tasks.value = res.data.tasks;
+      } catch (err) {
+        console.error("Gagal load tasks", err);
+      }
+    };
+
+    const syncEditForm = () => {
+      // Mengubah format tanggal MySQL ke YYYY-MM-DD agar dibaca oleh input date
+      const formattedDate = project.value.deadline ? new Date(project.value.deadline).toISOString().split('T')[0] : '';
+      
       editForm.value = {
         title: project.value.title || '',
         description: project.value.description || '',
         budget: project.value.budget || 0,
-        deadline: project.value.deadline || '',
+        deadline: formattedDate,
         status: project.value.status || 'planning'
       };
     };
 
-    const loadTasks = async () => {
-      const res = await api.get(`/tasks/project/${id}`);
-      tasks.value = res.data.tasks;
-    };
-
     const toggleEditMode = () => {
       isEditing.value = !isEditing.value;
-      if (isEditing.value) {
-        editForm.value = {
-          title: project.value.title || '',
-          description: project.value.description || '',
-          budget: project.value.budget || 0,
-          deadline: project.value.deadline || '',
-          status: project.value.status || 'planning'
-        };
-      }
+      if (isEditing.value) syncEditForm();
     };
 
     const updateProject = async () => {
@@ -309,31 +220,30 @@ export default {
         const res = await api.put(`/projects/${id}`, editForm.value);
         project.value = res.data.project;
         isEditing.value = false;
-        alert('Project updated successfully!');
+        alert('Project updated!');
       } catch (err) {
-        alert('Failed to update project: ' + (err.response?.data?.message || err.message));
+        alert('Failed: ' + (err.response?.data?.message || err.message));
+      }
+    };
+
+    const deleteProject = async () => {
+      if (!confirm("Delete this project?")) return;
+      try {
+        await api.delete(`/projects/${id}`);
+        router.push("/projects"); // Kembali ke list project user
+      } catch (err) {
+        alert("Gagal menghapus");
       }
     };
 
     const startEditTask = (task) => {
       editingTaskId.value = task.id;
-      taskEditForm.value = {
-        title: task.title || '',
-        detail: task.detail || '',
-        priority: task.priority || 3,
-        due_date: task.due_date || '',
-        status: task.status || 'todo'
-      };
-    };
-
-    const cancelEditTask = () => {
-      editingTaskId.value = null;
-      taskEditForm.value = {
-        title: '',
-        detail: '',
-        priority: 3,
-        due_date: '',
-        status: 'todo'
+      // Format tanggal task juga
+      const formattedDate = task.due_date ? new Date(task.due_date).toISOString().split('T')[0] : '';
+      
+      taskEditForm.value = { 
+        ...task,
+        due_date: formattedDate 
       };
     };
 
@@ -342,15 +252,19 @@ export default {
         await api.put(`/tasks/${editingTaskId.value}`, taskEditForm.value);
         await loadTasks();
         editingTaskId.value = null;
-        alert('Task updated successfully!');
       } catch (err) {
-        alert('Failed to update task: ' + (err.response?.data?.message || err.message));
+        alert('Update Task Gagal');
       }
     };
 
     const remove = async (taskId) => {
-      await api.delete(`/tasks/${taskId}`);
-      loadTasks();
+      if (!confirm("Hapus task?")) return;
+      try {
+        await api.delete(`/tasks/${taskId}`);
+        loadTasks();
+      } catch (err) {
+        alert("Gagal hapus");
+      }
     };
 
     onMounted(() => {
@@ -358,27 +272,9 @@ export default {
       loadTasks();
     });
 
-    const deleteProject = async () => {
-      if (!confirm("Yakin ingin hapus project ini?")) return;
-      await api.delete(`/projects/${id}`);
-      window.location.href = "/projects";
-    };
-
     return { 
-      project, 
-      tasks, 
-      id, 
-      isEditing, 
-      editingTaskId,
-      editForm, 
-      taskEditForm,
-      toggleEditMode, 
-      updateProject, 
-      startEditTask,
-      cancelEditTask,
-      updateTask,
-      remove, 
-      deleteProject 
+      project, tasks, id, isEditing, editingTaskId, editForm, taskEditForm,
+      toggleEditMode, updateProject, startEditTask, updateTask, remove, deleteProject 
     };
   },
 };

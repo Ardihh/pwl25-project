@@ -2,34 +2,17 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middlewares/auth');
 const db = require('../config/db');
+const adminController = require('../controllers/adminController');
 
-router.get('/stats', auth, async (req, res, next) => {
-  try {
-    if (req.user.role !== 'admin')
-      return res.status(403).json({ message: 'Forbidden' });
+// USERS
+router.get("/users", auth, adminController.listUsers);
+router.put("/users/:id/role", auth, adminController.changeUserRole);
+router.delete("/users/:id", auth, adminController.deleteUser);
 
-    const [[projects]] = await db.execute(
-      'SELECT COUNT(*) total FROM projects'
-    );
+// STATS
+router.get("/stats", auth, adminController.getStats);
 
-    const [[tasks]] = await db.execute(
-      'SELECT COUNT(*) total FROM tasks'
-    );
-
-    const [status] = await db.execute(`
-      SELECT status, COUNT(*) total
-      FROM projects
-      GROUP BY status
-    `);
-
-    res.json({
-      totalProjects: projects.total,
-      totalTasks: tasks.total,
-      status
-    });
-  } catch (err) {
-    next(err);
-  }
-});
+// PROJECTS
+router.get("/projects", auth, adminController.listAllProjects);
 
 module.exports = router;

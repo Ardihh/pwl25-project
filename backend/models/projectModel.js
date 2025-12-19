@@ -24,19 +24,13 @@ async function getProjectById(id) {
 }
 
 async function updateProject(id, data) {
-  // build minimal update
-  const fields = [];
-  const values = [];
-  for (const key of ['title','description','budget','deadline','status']) {
-    if (data[key] !== undefined) {
-      fields.push(`${key} = ?`);
-      values.push(data[key]);
-    }
-  }
-  if (!fields.length) return getProjectById(id);
-  values.push(id);
-  await db.execute(`UPDATE projects SET ${fields.join(', ')} WHERE id = ?`, values);
-  return getProjectById(id);
+  const { title, description, budget, deadline, status } = data;
+  const query = `
+    UPDATE projects 
+    SET title = ?, description = ?, budget = ?, deadline = ?, status = ? 
+    WHERE id = ?
+  `;
+  await db.execute(query, [title, description, budget, deadline, status, id]);
 }
 
 async function deleteProject(id) {
@@ -47,30 +41,25 @@ async function deleteProject(id) {
   return result.affectedRows > 0;
 }
 
-async function listProjects({ userId, isAdmin }) {
-  let sql = `
+async function listProjects({ isAdmin, userId }) {
+  let query = `
     SELECT 
-      p.id,
-      p.title,
-      p.description,
-      p.status,
-      p.deadline,
-      p.user_id,
-      u.name AS owner_name
+      p.id, 
+      p.title, 
+      p.description, 
+      p.budget,  /* <--- PASTIKAN ADA INI */
+      p.deadline, 
+      p.status, 
+      u.name as owner_name 
     FROM projects p
     JOIN users u ON p.user_id = u.id
   `;
 
-  const params = [];
-
   if (!isAdmin) {
-    sql += " WHERE p.user_id = ?";
-    params.push(userId);
+    query += ` WHERE p.user_id = ${userId}`;
   }
 
-  sql += " ORDER BY p.created_at DESC";
-
-  const [rows] = await db.execute(sql, params);
+  const [rows] = await db.execute(query);
   return rows;
 }
 

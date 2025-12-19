@@ -40,30 +40,42 @@
 <script>
 import { ref } from "vue";
 import { useAuthStore } from "../stores/auth";
+import { useRouter } from "vue-router";
 
 export default {
   setup() {
     const email = ref("");
     const password = ref("");
     const error = ref("");
+    const loading = ref(false);
 
     const auth = useAuthStore();
+    const router = useRouter();
 
     const handleLogin = async () => {
+      error.value = "";
+      loading.value = true;
+
       try {
-        await auth.login(email.value, password.value);
-        const role = localStorage.getItem("role");
-        if (role === "admin") {
-          window.location.href = "/admin/dashboard";
+        const user = await auth.login(email.value, password.value);
+        if (user && user.role === "admin") {
+          await router.push("/admin/dashboard");
         } else {
-          window.location.href = "/";
+          await router.push("/dashboard");
+        }
+        if (role === "admin") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/");
         }
       } catch (err) {
-        error.value = "Login gagal, periksa email/password";
+        error.value = err.response?.data?.message || "Login gagal, periksa email/password";
+      } finally {
+        loading.value = false;
       }
     };
 
-    return { email, password, error, handleLogin };
+    return { email, password, error, loading, handleLogin };
   },
 };
 </script>
